@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: ascn
+    runtime: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm ci
+    startCommand: npm start
