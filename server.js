@@ -17,6 +17,7 @@ const BOUNDARY_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const NETWORK_CACHE_TTL_MS = 20 * 60 * 1000;
 const TREND_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const DIRECTORY_CACHE_TTL_MS = 12 * 60 * 60 * 1000;
+const OUTBOUND_FETCH_TIMEOUT_MS = 5000;
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -51,21 +52,55 @@ const NEWS_FEEDS = {
 
 const NETWORK_FEED = {
   url:
-    "https://news.google.com/rss/search?q=%22ASEAN%20Smart%20Cities%20Network%22%20OR%20%22ASEAN%20Smart%20City%22%20OR%20%22ASCN%22&hl=en-US&gl=US&ceid=US:en",
+    "https://news.google.com/rss/search?q=%22smart%20city%20Thailand%22%20OR%20depa%20startup%20Thailand%20government&hl=en-US&gl=US&ceid=US:en",
   limit: 20,
   minDate: "2024-01-01",
   filter: (item) => {
     const haystack = `${item.title} ${item.summary} ${item.source}`.toLowerCase();
-    const hasSmartCityContext = /(asean|smart city|smart cities network|ascn8|asean smart)/.test(
+    const hasSmartCityContext = /(smart city|thailand|depa|startup|digital economy)/.test(
       haystack
     );
     const isTickerNoise =
-      /(vtx:ascn|ascom|coinmarketcap|crypto|price today|yahoo finance|stock|shares|alpha.?scan|ascn\.sw)/.test(
+      /(coinmarketcap|crypto|price today|yahoo finance|stock|shares|alpha.?scan)/.test(
         haystack
       );
     return hasSmartCityContext && !isTickerNoise;
   },
 };
+
+const FALLBACK_NEWS = {
+  startups: [
+    {
+      title: "Startup feed is temporarily unavailable",
+      link: "https://www.depa.or.th/en",
+      source: "Smart City Thailand Hub",
+      published: "Live feed fallback",
+      summary:
+        "External startup sources did not respond. Service remains online and will refresh automatically.",
+    },
+  ],
+  government: [
+    {
+      title: "Government feed is temporarily unavailable",
+      link: "https://www.depa.or.th/en",
+      source: "Smart City Thailand Hub",
+      published: "Live feed fallback",
+      summary:
+        "External government sources did not respond. Service remains online and will refresh automatically.",
+    },
+  ],
+};
+
+const FALLBACK_NETWORK_ITEMS = [
+  {
+    title: "Network mention feed is temporarily unavailable",
+    link: "https://www.depa.or.th/en",
+    source: "Smart City Thailand Hub",
+    published: "Live feed fallback",
+    summary:
+      "Ecosystem mention sources are currently unreachable. The page will auto-refresh once sources respond.",
+  },
+];
 
 const TREND_TERMS = [
   {
@@ -204,8 +239,8 @@ const RESOURCES = {
     },
     {
       title: "Network Mentions",
-      summary: "Media and narrative monitoring for ASEAN Smart Cities visibility.",
-      label: "Open Network News",
+      summary: "Media and narrative monitoring for Smart City Thailand ecosystem visibility.",
+      label: "Open Ecosystem News",
       href: "/network-news.html",
     },
     {
@@ -232,6 +267,11 @@ let trendsExpiry = 0;
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+
+  if (url.pathname === "/health") {
+    sendJson(res, 200, buildHealthPayload());
+    return;
+  }
 
   if (url.pathname === "/api/news") {
     await serveNews(res);
@@ -264,7 +304,7 @@ const server = http.createServer(async (req, res) => {
   await serveStatic(url.pathname, res);
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`Smart City directory server listening on http://127.0.0.1:${PORT}`);
 });
 
@@ -273,10 +313,10 @@ async function serveNews(res) {
     const payload = await getNewsPayload();
     sendJson(res, 200, payload);
   } catch (error) {
-    sendJson(res, 500, {
-      error: "Unable to load news feeds.",
-      detail: error instanceof Error ? error.message : String(error),
-    });
+    const fallback = buildNewsFallback(error);
+    cachedNews = fallback;
+    newsExpiry = Date.now() + Math.min(NEWS_CACHE_TTL_MS, 2 * 60 * 1000);
+    sendJson(res, 200, fallback);
   }
 }
 
@@ -285,10 +325,7 @@ async function servePulse(res) {
     const payload = await getPulsePayload();
     sendJson(res, 200, payload);
   } catch (error) {
-    sendJson(res, 500, {
-      error: "Unable to load live Thailand pulse.",
-      detail: error instanceof Error ? error.message : String(error),
-    });
+    sendJson(res, 200, buildPulseFallback(error));
   }
 }
 
@@ -297,10 +334,10 @@ async function serveNetworkNews(res) {
     const payload = await getNetworkNewsPayload();
     sendJson(res, 200, payload);
   } catch (error) {
-    sendJson(res, 500, {
-      error: "Unable to load network mentions.",
-      detail: error instanceof Error ? error.message : String(error),
-    });
+    const fallback = buildNetworkFallback(error);
+    cachedNetworkNews = fallback;
+    networkExpiry = Date.now() + Math.min(NETWORK_CACHE_TTL_MS, 2 * 60 * 1000);
+    sendJson(res, 200, fallback);
   }
 }
 
@@ -309,11 +346,105 @@ async function serveLibrary(res) {
     const payload = await getLibraryPayload();
     sendJson(res, 200, payload);
   } catch (error) {
-    sendJson(res, 500, {
-      error: "Unable to build library payload.",
-      detail: error instanceof Error ? error.message : String(error),
-    });
+    sendJson(res, 200, buildLibraryFallback(error));
   }
+}
+
+function buildHealthPayload() {
+  const now = Date.now();
+
+  return {
+    status: "ok",
+    service: "smart-city-thailand-tech-hunt",
+    timestamp: new Date(now).toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
+    cache: {
+      newsFresh: Boolean(cachedNews && now < newsExpiry),
+      pulseFresh: Boolean(cachedPulse && now < pulseExpiry),
+      networkFresh: Boolean(cachedNetworkNews && now < networkExpiry),
+      libraryFresh: Boolean(cachedDirectoryCatalog && now < directoryExpiry),
+    },
+  };
+}
+
+function buildNewsFallback(error) {
+  return {
+    generatedAt: new Date().toISOString(),
+    refreshMinutes: Math.round(NEWS_CACHE_TTL_MS / 60000),
+    startups: FALLBACK_NEWS.startups,
+    government: FALLBACK_NEWS.government,
+    fallback: true,
+    warning: `Live feed unavailable: ${errorMessage(error)}`,
+  };
+}
+
+function buildNetworkFallback(error) {
+  return {
+    generatedAt: new Date().toISOString(),
+    refreshMinutes: Math.round(NETWORK_CACHE_TTL_MS / 60000),
+    items: FALLBACK_NETWORK_ITEMS,
+    fallback: true,
+    warning: `Live feed unavailable: ${errorMessage(error)}`,
+  };
+}
+
+function buildPulseFallback(error) {
+  return {
+    generatedAt: new Date().toISOString(),
+    refreshMinutes: Math.round(PULSE_CACHE_TTL_MS / 60000),
+    boundaries: null,
+    stations: THAILAND_STATIONS.map((station) => ({
+      ...station,
+      trendKeywords: [],
+      trendSource: "Unavailable",
+      pillars: [],
+      projectCount: 0,
+      air: {
+        usAqi: null,
+        europeanAqi: null,
+        pm2_5: null,
+        pm10: null,
+      },
+      weather: {
+        temperature_2m: null,
+        precipitation: null,
+        weather_code: null,
+        wind_speed_10m: null,
+      },
+    })),
+    earthquakes: [],
+    pillars: [],
+    errors: [errorMessage(error)],
+    fallback: true,
+    sources: {
+      boundaries: "geoBoundaries",
+      airQuality: "Open-Meteo Air Quality API",
+      weather: "Open-Meteo Forecast API",
+      earthquakes: "USGS Earthquake API",
+      trends: "Google Trends",
+    },
+  };
+}
+
+function buildLibraryFallback(error) {
+  return {
+    generatedAt: new Date().toISOString(),
+    pillars: [],
+    domains: [],
+    tracks: [
+      {
+        name: "Catalog unavailable",
+        description:
+          "The directory catalog could not be parsed at startup. Check data.js generation and retry.",
+        metric: errorMessage(error),
+      },
+    ],
+    fallback: true,
+  };
+}
+
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
 }
 
 async function getNewsPayload() {
@@ -777,12 +908,16 @@ function applyCityProfileToPillars(cityId, pillarScores) {
 }
 
 async function fetchFeed(config) {
-  const response = await fetch(config.url, {
-    headers: {
-      "user-agent": "smart-city-directory/1.0",
-      accept: "application/rss+xml, application/xml, text/xml, */*",
+  const response = await fetchWithTimeout(
+    config.url,
+    {
+      headers: {
+        "user-agent": "smart-city-directory/1.0",
+        accept: "application/rss+xml, application/xml, text/xml, */*",
+      },
     },
-  });
+    OUTBOUND_FETCH_TIMEOUT_MS
+  );
 
   if (!response.ok) {
     throw new Error(`${config.url} returned HTTP ${response.status}`);
@@ -910,18 +1045,38 @@ async function fetchThailandEarthquakes() {
 }
 
 async function fetchJson(url) {
-  const response = await fetch(url, {
-    headers: {
-      "user-agent": "smart-city-directory/1.0",
-      accept: "application/json, application/geo+json, */*",
+  const response = await fetchWithTimeout(
+    url,
+    {
+      headers: {
+        "user-agent": "smart-city-directory/1.0",
+        accept: "application/json, application/geo+json, */*",
+      },
     },
-  });
+    OUTBOUND_FETCH_TIMEOUT_MS
+  );
 
   if (!response.ok) {
     throw new Error(`${url} returned HTTP ${response.status}`);
   }
 
   return response.json();
+}
+
+async function fetchWithTimeout(url, options, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    throw new Error(`${url} fetch failed: ${errorMessage(error)}`);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function trimFeatureCollection(featureCollection, targetPointsPerRing) {

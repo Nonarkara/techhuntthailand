@@ -193,6 +193,13 @@
       unavailable: "实时数据暂时不可用",
     },
   };
+  const SUPPORTED_LANGUAGES = new Set(["en", "th", "zh"]);
+  const LANGUAGE_STORAGE_KEY = "techhunt-language";
+  const HTML_LANG = {
+    en: "en",
+    th: "th",
+    zh: "zh-Hans",
+  };
 
   const elements = {
     navPulse: document.getElementById("nav-pulse"),
@@ -215,10 +222,10 @@
   };
 
   const state = {
-    language:
-      localStorage.getItem("ascn-language") ||
-      document.getElementById("language-select")?.value ||
-      "en",
+    language: sanitizeLanguage(
+      localStorage.getItem(LANGUAGE_STORAGE_KEY) ||
+        document.getElementById("language-select")?.value
+    ),
     payload: null,
     loading: false,
     error: "",
@@ -229,14 +236,19 @@
       quakes: true,
     },
   };
+  const languageSelect = document.getElementById("language-select");
+  if (languageSelect) {
+    languageSelect.value = state.language;
+  }
 
   render();
   loadPulse();
   window.setInterval(loadPulse, 10 * 60 * 1000);
 
-  document.getElementById("language-select")?.addEventListener("change", (event) => {
-    state.language = event.target.value || "en";
-    localStorage.setItem("ascn-language", state.language);
+  languageSelect?.addEventListener("change", (event) => {
+    state.language = sanitizeLanguage(event.target.value);
+    event.target.value = state.language;
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, state.language);
     render();
   });
 
@@ -265,6 +277,10 @@
     render();
   });
 
+  function sanitizeLanguage(value) {
+    return SUPPORTED_LANGUAGES.has(value) ? value : "en";
+  }
+
   function locale() {
     return COPY[state.language] || COPY.en;
   }
@@ -283,6 +299,7 @@
 
   function renderStaticCopy() {
     const copy = locale();
+    document.documentElement.lang = HTML_LANG[state.language] || HTML_LANG.en;
 
     if (elements.navPulse) {
       elements.navPulse.textContent = copy.navPulse;

@@ -379,6 +379,13 @@
       noGovernmentNews: "未返回政府动态",
     },
   };
+  const SUPPORTED_LANGUAGES = new Set(["en", "th", "zh"]);
+  const LANGUAGE_STORAGE_KEY = "techhunt-language";
+  const HTML_LANG = {
+    en: "en",
+    th: "th",
+    zh: "zh-Hans",
+  };
 
   const domainMap = new Map(payload.domains.map((domain) => [domain.id, domain]));
   let latestNewsPayload = null;
@@ -457,7 +464,7 @@
     query: "",
     domain: "all",
     sort: "curated",
-    language: localStorage.getItem("ascn-language") || "en",
+    language: sanitizeLanguage(localStorage.getItem(LANGUAGE_STORAGE_KEY)),
     selectedId: solutions[0] ? solutions[0].id : null,
   };
 
@@ -481,8 +488,9 @@
   });
 
   elements.languageSelect.addEventListener("change", (event) => {
-    state.language = event.target.value;
-    localStorage.setItem("ascn-language", state.language);
+    state.language = sanitizeLanguage(event.target.value);
+    elements.languageSelect.value = state.language;
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, state.language);
     render();
     renderNewsFromCache();
   });
@@ -535,6 +543,7 @@
 
   function renderStaticLocale() {
     const copy = locale();
+    document.documentElement.lang = HTML_LANG[state.language] || HTML_LANG.en;
     elements.languageSelect.value = state.language;
 
     elements.heroKicker.textContent = copy.heroKicker;
@@ -1157,6 +1166,10 @@
 
   function locale() {
     return LOCALES[state.language] || LOCALES.en;
+  }
+
+  function sanitizeLanguage(value) {
+    return SUPPORTED_LANGUAGES.has(value) ? value : "en";
   }
 
   function detectSignals(solution) {

@@ -9,7 +9,7 @@
       overview: "Overview",
       library: "Library",
       resources: "Resources",
-      networkNews: "Network News",
+      networkNews: "Ecosystem News",
       language: "Language",
       libraryKicker: "Knowledge Library",
       libraryTitle: "Program intelligence for cities, investors, and partners.",
@@ -22,19 +22,19 @@
       learningTracks: "Learning Tracks",
       learningTitle: "City-to-city collaboration formats used in the program.",
       resourceKicker: "Resources & References",
-      resourceTitle: "Operational resources for scaling ASEAN Smart City pilots.",
+      resourceTitle: "Operational resources for scaling Smart City Thailand pilots.",
       resourceCopy:
-        "The resource library brings together data feeds, source references, and implementation assets used by the Thailand program hub.",
+        "The resource library brings together data feeds, source references, and implementation assets used by the Tech Hunt directory hub.",
       liveData: "Live Data Sources",
       liveDataTitle: "APIs currently powering the hub.",
       programAssets: "Program Assets",
       programAssetsTitle: "Core materials for partner onboarding and due diligence.",
-      newsKicker: "Network Mentions",
-      newsTitle: "ASEAN Smart Cities Network signal monitoring.",
+      newsKicker: "Ecosystem Mentions",
+      newsTitle: "Smart City Thailand ecosystem signal monitoring.",
       newsCopy:
-        "This page tracks mention trends relevant to ASEAN Smart Cities and Thailand program progress so partners can monitor visibility, narrative, and momentum.",
-      ascnMentions: "ASCN Mentions",
-      ascnMentionsTitle: "Articles mentioning ASEAN Smart Cities Network.",
+        "This page tracks mention trends relevant to Smart City Thailand implementation progress so partners can monitor visibility, narrative, and momentum.",
+      ascnMentions: "Ecosystem Mentions",
+      ascnMentionsTitle: "Articles mentioning Smart City Thailand priorities.",
       thaiSignals: "Thailand Signals",
       thaiSignalsTitle:
         "Startup and government updates connected to smart city execution.",
@@ -45,46 +45,98 @@
       domains: "Domains",
       keywords: "Keywords",
     },
-    id: {
-      overview: "Ikhtisar",
-      library: "Pustaka",
-      resources: "Sumber Daya",
-      networkNews: "Berita Jaringan",
-      language: "Bahasa",
+    th: {
+      overview: "ภาพรวม",
+      library: "คลังความรู้",
+      resources: "ทรัพยากร",
+      networkNews: "ข่าวระบบนิเวศ",
+      language: "ภาษา",
+      libraryKicker: "คลังความรู้",
+      libraryTitle: "ฐานข้อมูลโครงการสำหรับเมือง นักลงทุน และพันธมิตร",
+      libraryCopy:
+        "หน้านี้จัดโครงการตามเสาหลักการดำเนินงาน โดเมน และกิจกรรมโครงการ เพื่อใช้ในการวิเคราะห์ วางนโยบาย และต่อยอดข้ามเมือง",
+      threePillars: "3 เสาหลักการลงทุน",
+      pillarTitle: "จุดที่โครงการกำลังเติบโตเด่นชัด",
+      domainPortfolio: "พอร์ตโฟลิโอรายโดเมน",
+      domainTitle: "จำนวนโครงการและคำสำคัญตัวอย่างในแต่ละโดเมน",
+      learningTracks: "แนวทางการเรียนรู้ร่วมกัน",
+      learningTitle: "รูปแบบการทำงานร่วมกันระหว่างเมืองที่ใช้จริงในโครงการ",
+      resourceKicker: "ทรัพยากรและแหล่งอ้างอิง",
+      resourceTitle: "ทรัพยากรเพื่อขยายผลโครงการ Smart City Thailand",
+      resourceCopy:
+        "รวมแหล่งข้อมูลอ้างอิง ฟีดข้อมูล และทรัพยากรที่ใช้ในการดำเนินงานของ Tech Hunt Directory",
+      liveData: "แหล่งข้อมูลสด",
+      liveDataTitle: "API ที่ระบบใช้งานอยู่ในปัจจุบัน",
+      programAssets: "เอกสารสำคัญโครงการ",
+      programAssetsTitle: "ชุดข้อมูลหลักสำหรับการทำงานร่วมกับพันธมิตร",
+      newsKicker: "สัญญาณระบบนิเวศ",
+      newsTitle: "ติดตามสัญญาณข่าวของระบบนิเวศ Smart City Thailand",
+      newsCopy:
+        "หน้านี้ติดตามแนวโน้มข่าวที่เกี่ยวข้องกับการขับเคลื่อน Smart City Thailand เพื่อให้พันธมิตรเห็นภาพความเคลื่อนไหวและโมเมนตัม",
+      ascnMentions: "ข่าวที่กล่าวถึงระบบนิเวศ",
+      ascnMentionsTitle: "บทความที่กล่าวถึงประเด็น Smart City Thailand",
+      thaiSignals: "สัญญาณประเทศไทย",
+      thaiSignalsTitle: "อัปเดตสตาร์ตอัปและภาครัฐที่เกี่ยวข้องกับการขับเคลื่อนเมืองอัจฉริยะ",
+      loading: "กำลังโหลด...",
+      noData: "ยังไม่มีข้อมูล",
+      source: "แหล่งที่มา",
+      projects: "โครงการ",
+      domains: "โดเมน",
+      keywords: "คำสำคัญ",
     },
     zh: {
       overview: "总览",
       library: "资料库",
       resources: "资源",
-      networkNews: "网络新闻",
+      networkNews: "生态新闻",
       language: "语言",
+      libraryKicker: "知识资料库",
+      libraryTitle: "面向城市、投资方与合作伙伴的项目情报",
+      libraryCopy:
+        "本页按实施支柱、领域与项目活动组织内容，便于尽调、政策设计与跨城复制。",
+      threePillars: "三大投资支柱",
+      pillarTitle: "当前项目动能最集中的方向",
+      domainPortfolio: "领域组合",
+      domainTitle: "各领域项目数量与能力关键词样本",
+      learningTracks: "学习路径",
+      learningTitle: "项目中实际采用的城市协作模式",
+      resourceKicker: "资源与参考",
+      resourceTitle: "支持 Smart City Thailand 试点扩展的运营资源",
+      resourceCopy:
+        "整合本目录所使用的数据源、参考链接与实施资产。",
+      liveData: "实时数据源",
+      liveDataTitle: "当前驱动平台的 API",
+      programAssets: "项目资产",
+      programAssetsTitle: "用于合作方对接与尽调的核心材料",
+      newsKicker: "生态提及",
+      newsTitle: "Smart City Thailand 生态信号监测",
+      newsCopy:
+        "本页跟踪与 Smart City Thailand 执行进展相关的提及趋势，帮助合作方掌握可见度与动能。",
+      ascnMentions: "生态提及",
+      ascnMentionsTitle: "提及 Smart City Thailand 重点方向的文章",
+      thaiSignals: "泰国信号",
+      thaiSignalsTitle: "与智慧城市执行相关的创业与政府动态",
+      loading: "加载中...",
+      noData: "暂无数据",
+      source: "来源",
+      projects: "项目",
+      domains: "领域",
+      keywords: "关键词",
     },
-    th: {
-      overview: "ภาพรวม",
-      library: "คลังความรู้",
-      resources: "ทรัพยากร",
-      networkNews: "ข่าวเครือข่าย",
-      language: "ภาษา",
-    },
-    km: {
-      overview: "ទិដ្ឋភាពទូទៅ",
-      library: "បណ្ណាល័យ",
-      resources: "ធនធាន",
-      networkNews: "ព័ត៌មានបណ្តាញ",
-      language: "ភាសា",
-    },
-    vi: {
-      overview: "Tổng quan",
-      library: "Thư viện",
-      resources: "Tài nguyên",
-      networkNews: "Tin tức mạng lưới",
-      language: "Ngôn ngữ",
-    },
+  };
+  const SUPPORTED_LANGUAGES = new Set(["en", "th", "zh"]);
+  const LANGUAGE_STORAGE_KEY = "techhunt-language";
+  const HTML_LANG = {
+    en: "en",
+    th: "th",
+    zh: "zh-Hans",
   };
 
   const languageSelect = document.getElementById("language-select");
   const state = {
-    language: localStorage.getItem("ascn-language") || "en",
+    language: sanitizeLanguage(
+      localStorage.getItem(LANGUAGE_STORAGE_KEY)
+    ),
   };
 
   if (languageSelect) {
@@ -93,8 +145,9 @@
     }
     languageSelect.value = state.language;
     languageSelect.addEventListener("change", (event) => {
-      state.language = event.target.value || "en";
-      localStorage.setItem("ascn-language", state.language);
+      state.language = sanitizeLanguage(event.target.value);
+      languageSelect.value = state.language;
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, state.language);
       applyLocale();
     });
   }
@@ -121,7 +174,7 @@
   }
 
   function applyLocale() {
-    document.documentElement.lang = state.language === "en" ? "en" : "en";
+    document.documentElement.lang = HTML_LANG[state.language] || HTML_LANG.en;
     document.querySelectorAll("[data-i18n]").forEach((node) => {
       node.textContent = t(node.dataset.i18n);
     });
@@ -304,6 +357,10 @@
       return item.label_zh || item.label || item.name || "";
     }
     return item.label || item.name || "";
+  }
+
+  function sanitizeLanguage(value) {
+    return SUPPORTED_LANGUAGES.has(value) ? value : "en";
   }
 
   function t(key) {
