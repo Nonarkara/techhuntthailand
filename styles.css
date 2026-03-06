@@ -40,6 +40,28 @@ body {
   font-family: var(--body);
 }
 
+.skip-link {
+  position: fixed;
+  top: -3rem;
+  left: 1rem;
+  z-index: 999;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-strong);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid rgba(0, 61, 165, 0.18);
+}
+
 button,
 input,
 select {
@@ -949,9 +971,27 @@ img {
   color: #fff;
 }
 
+.toolbar-button {
+  min-height: 2.9rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-strong);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
 .reset-button:hover,
 .reset-button:focus-visible {
   filter: brightness(0.95);
+  outline: none;
+}
+
+.toolbar-button:hover,
+.toolbar-button:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
   outline: none;
 }
 

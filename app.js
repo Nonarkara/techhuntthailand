@@ -42,6 +42,9 @@
       domainSelectLabel: "7 Smart Domain",
       sortLabel: "Sort",
       resetLabel: "Reset",
+      shareLabel: "Copy Link",
+      shareCopied: "Copied",
+      exportLabel: "Export CSV",
       detailKicker: "Selected Entry",
       sortOptions: {
         curated: "Curated Order",
@@ -169,6 +172,9 @@
       domainSelectLabel: "มิติเมืองอัจฉริยะ",
       sortLabel: "จัดเรียง",
       resetLabel: "ล้างค่า",
+      shareLabel: "คัดลอกลิงก์",
+      shareCopied: "คัดลอกแล้ว",
+      exportLabel: "ส่งออก CSV",
       detailKicker: "รายการที่เลือก",
       sortOptions: {
         curated: "ตามลำดับคัดสรร",
@@ -294,6 +300,9 @@
       domainSelectLabel: "智慧城市领域",
       sortLabel: "排序",
       resetLabel: "重置",
+      shareLabel: "复制链接",
+      shareCopied: "已复制",
+      exportLabel: "导出 CSV",
       detailKicker: "当前条目",
       sortOptions: {
         curated: "按策展顺序",
@@ -445,6 +454,8 @@
     domainSelect: document.getElementById("domain-select"),
     sortLabel: document.getElementById("sort-label"),
     sortSelect: document.getElementById("sort-select"),
+    shareButton: document.getElementById("share-button"),
+    exportButton: document.getElementById("export-button"),
     resetButton: document.getElementById("reset-button"),
     detailKicker: document.getElementById("detail-kicker"),
     domainFilters: document.getElementById("domain-filters"),
@@ -467,6 +478,8 @@
     language: sanitizeLanguage(localStorage.getItem(LANGUAGE_STORAGE_KEY)),
     selectedId: solutions[0] ? solutions[0].id : null,
   };
+  applyUrlState();
+  elements.searchInput.value = state.query;
 
   render();
   loadNews();
@@ -495,6 +508,20 @@
     renderNewsFromCache();
   });
 
+  elements.shareButton.addEventListener("click", async () => {
+    const didCopy = await copyShareLink();
+    const label = didCopy ? locale().shareCopied : locale().shareLabel;
+    elements.shareButton.textContent = label;
+    window.setTimeout(() => {
+      elements.shareButton.textContent = locale().shareLabel;
+    }, 1200);
+  });
+
+  elements.exportButton.addEventListener("click", () => {
+    const filtered = applyDomainAndSort(getQueryPool());
+    exportFilteredCsv(filtered);
+  });
+
   elements.resetButton.addEventListener("click", () => {
     state.query = "";
     state.domain = "all";
@@ -505,6 +532,27 @@
     elements.sortSelect.value = "curated";
     render();
     renderNewsFromCache();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+
+    const target = event.target;
+    if (
+      target instanceof HTMLElement &&
+      (target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    elements.searchInput.focus();
+    elements.searchInput.select();
   });
 
   elements.domainFilters.addEventListener("click", (event) => {
@@ -533,6 +581,7 @@
     const queryPool = getQueryPool();
     const filtered = applyDomainAndSort(queryPool);
     syncSelection(filtered);
+    syncUrlState();
     renderDomainFilters(queryPool);
     renderActiveState(queryPool, filtered);
     renderSignalStrip(filtered);
@@ -585,6 +634,8 @@
     elements.searchInput.placeholder = copy.searchPlaceholder;
     elements.domainSelectLabel.textContent = copy.domainSelectLabel;
     elements.sortLabel.textContent = copy.sortLabel;
+    elements.shareButton.textContent = copy.shareLabel;
+    elements.exportButton.textContent = copy.exportLabel;
     elements.resetButton.textContent = copy.resetLabel;
     elements.detailKicker.textContent = copy.detailKicker;
 
@@ -1162,6 +1213,170 @@
       );
     }
     return solution.description_en || solution.description || "";
+  }
+
+  function applyUrlState() {
+    const params = new URLSearchParams(window.location.search);
+    const validDomains = new Set(["all", ...payload.domains.map((domain) => domain.id)]);
+    const validSorts = new Set(["curated", "name", "organization", "verified"]);
+
+    const languageParam = params.get("lang");
+    if (languageParam) {
+      state.language = sanitizeLanguage(languageParam);
+    }
+
+    const query = (params.get("q") || "").trim().toLowerCase();
+    if (query) {
+      state.query = query;
+    }
+
+    const domain = params.get("domain");
+    if (domain && validDomains.has(domain)) {
+      state.domain = domain;
+    }
+
+    const sort = params.get("sort");
+    if (sort && validSorts.has(sort)) {
+      state.sort = sort;
+    }
+
+    const selectedId = params.get("id");
+    if (selectedId && solutions.some((solution) => solution.id === selectedId)) {
+      state.selectedId = selectedId;
+    }
+  }
+
+  function syncUrlState() {
+    if (!window.history || typeof window.history.replaceState !== "function") {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    if (state.query) {
+      params.set("q", state.query);
+    }
+    if (state.domain !== "all") {
+      params.set("domain", state.domain);
+    }
+    if (state.sort !== "curated") {
+      params.set("sort", state.sort);
+    }
+    if (state.language !== "en") {
+      params.set("lang", state.language);
+    }
+    if (state.selectedId) {
+      params.set("id", state.selectedId);
+    }
+
+    const query = params.toString();
+    const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash || ""}`;
+    window.history.replaceState(null, "", nextUrl);
+  }
+
+  async function copyShareLink() {
+    const shareUrl = new URL(window.location.href);
+    const hash = shareUrl.hash;
+    const params = new URLSearchParams(shareUrl.search);
+    if (state.query) {
+      params.set("q", state.query);
+    } else {
+      params.delete("q");
+    }
+    if (state.domain !== "all") {
+      params.set("domain", state.domain);
+    } else {
+      params.delete("domain");
+    }
+    if (state.sort !== "curated") {
+      params.set("sort", state.sort);
+    } else {
+      params.delete("sort");
+    }
+    if (state.language !== "en") {
+      params.set("lang", state.language);
+    } else {
+      params.delete("lang");
+    }
+    if (state.selectedId) {
+      params.set("id", state.selectedId);
+    } else {
+      params.delete("id");
+    }
+
+    shareUrl.search = params.toString();
+    shareUrl.hash = hash;
+    const value = shareUrl.toString();
+
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+    } catch {
+      // Fall back to document.execCommand path below.
+    }
+
+    const fallbackInput = document.createElement("input");
+    fallbackInput.value = value;
+    fallbackInput.setAttribute("readonly", "true");
+    fallbackInput.style.position = "absolute";
+    fallbackInput.style.left = "-9999px";
+    document.body.appendChild(fallbackInput);
+    fallbackInput.select();
+    const copied = document.execCommand("copy");
+    document.body.removeChild(fallbackInput);
+    return copied;
+  }
+
+  function exportFilteredCsv(filtered) {
+    const headers = [
+      "ID",
+      "Solution",
+      "Organization",
+      "Domain",
+      "Cohort",
+      "Verified Website",
+      "Website URL",
+      "Search URL",
+      "Description",
+    ];
+
+    const rows = filtered.map((solution) => [
+      solution.id,
+      solution.name,
+      solution.organization,
+      localizedSolutionDomainLabel(solution),
+      localizedCohortLabel(solution),
+      solution.has_verified_website ? "yes" : "no",
+      solution.website || "",
+      solution.search_url || "",
+      localizedSolutionDescription(solution),
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => escapeCsvCell(value)).join(","))
+      .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const href = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.download = `techhunt-directory-${formatDateToken()}.csv`;
+    anchor.click();
+    URL.revokeObjectURL(href);
+  }
+
+  function escapeCsvCell(value) {
+    const normalized = String(value ?? "");
+    return `"${normalized.replaceAll('"', '""')}"`;
+  }
+
+  function formatDateToken() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    return `${y}${m}${d}`;
   }
 
   function locale() {
