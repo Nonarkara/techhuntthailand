@@ -190,7 +190,7 @@
     }
 
     setLoading([pillarsRoot, domainsRoot, tracksRoot]);
-    const payload = await fetchJson("/api/library");
+    const payload = await fetchApiJson("library");
 
     pillarsRoot.innerHTML = (payload.pillars || [])
       .map(
@@ -248,7 +248,7 @@
     }
 
     setLoading([sourceRoot, assetsRoot]);
-    const payload = await fetchJson("/api/resources");
+    const payload = await fetchApiJson("resources");
 
     sourceRoot.innerHTML = (payload.sources || [])
       .map(
@@ -288,8 +288,8 @@
     setLoading([mentionsRoot, thailandSignalsRoot]);
 
     const [mentionsPayload, newsPayload] = await Promise.all([
-      fetchJson("/api/network-news"),
-      fetchJson("/api/news"),
+      fetchApiJson("network-news"),
+      fetchApiJson("news"),
     ]);
 
     mentionsRoot.innerHTML = renderNewsCards(mentionsPayload.items || []);
@@ -341,12 +341,28 @@
     });
   }
 
-  async function fetchJson(url) {
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+  async function fetchApiJson(name) {
+    const urls = apiCandidates(name);
+    let lastError = null;
+
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+      }
     }
-    return response.json();
+
+    throw lastError || new Error(`Unable to load ${name}`);
+  }
+
+  function apiCandidates(name) {
+    const relativeUrl = new URL(`api/${name}.json`, window.location.href).toString();
+    return [`/api/${name}`, relativeUrl];
   }
 
   function localizedValue(item) {

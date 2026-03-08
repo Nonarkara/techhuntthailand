@@ -714,12 +714,7 @@
     renderStatus();
 
     try {
-      const response = await fetch("/api/pulse", { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchApiJson("pulse");
       state.payload = data;
 
       if (!state.selectedStationId && data.stations?.length) {
@@ -739,6 +734,30 @@
       state.loading = false;
       render();
     }
+  }
+
+  async function fetchApiJson(name) {
+    const urls = apiCandidates(name);
+    let lastError = null;
+
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error(`Unable to load ${name}`);
+  }
+
+  function apiCandidates(name) {
+    const relativeUrl = new URL(`api/${name}.json`, window.location.href).toString();
+    return [`/api/${name}`, relativeUrl];
   }
 
   function getSelectedStation() {

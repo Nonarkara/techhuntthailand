@@ -1060,12 +1060,7 @@
     elements.newsStatus.textContent = copy.newsRefreshing;
 
     try {
-      const response = await fetch("/api/news", { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      latestNewsPayload = await response.json();
+      latestNewsPayload = await fetchApiJson("news");
       renderNewsFromCache();
     } catch (error) {
       latestNewsPayload = null;
@@ -1127,6 +1122,30 @@
         `
       )
       .join("");
+  }
+
+  async function fetchApiJson(name) {
+    const urls = apiCandidates(name);
+    let lastError = null;
+
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error(`Unable to load ${name}`);
+  }
+
+  function apiCandidates(name) {
+    const relativeUrl = new URL(`api/${name}.json`, window.location.href).toString();
+    return [`/api/${name}`, relativeUrl];
   }
 
   function localizedDomainLabel(domain) {
