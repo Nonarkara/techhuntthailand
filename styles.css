@@ -1599,12 +1599,27 @@ body.theme-terminal::after {
 body.theme-terminal .page-shell {
   position: relative;
   z-index: 1;
-  width: min(1520px, calc(100% - 2rem));
-  padding: 1.2rem 0 3rem;
+  width: min(1560px, calc(100% - 1.5rem));
+  padding: 0.9rem 0 3rem;
 }
 
 body.theme-terminal .page-shell > * {
   animation: terminal-rise 560ms ease both;
+}
+
+body.theme-terminal .page-shell::before {
+  content: "SMART CITY THAILAND // TECH HUNT TERMINAL // ONLINE";
+  display: block;
+  margin-bottom: 0.7rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(49, 240, 197, 0.16);
+  background: rgba(3, 11, 16, 0.86);
+  color: var(--asean-blue);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-sm);
 }
 
 body.theme-terminal .skip-link {
@@ -1668,14 +1683,29 @@ body.theme-terminal .sub-card::before {
 }
 
 body.theme-terminal .site-topbar {
+  position: sticky;
+  top: 0.55rem;
+  z-index: 30;
   align-items: flex-end;
   margin-bottom: 1.2rem;
   padding: 1rem 1.15rem;
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   background:
     linear-gradient(180deg, rgba(3, 10, 16, 0.9), rgba(2, 8, 13, 0.94)),
     linear-gradient(90deg, rgba(49, 240, 197, 0.05) 1px, transparent 1px),
     linear-gradient(0deg, rgba(49, 240, 197, 0.04) 1px, transparent 1px);
+}
+
+body.theme-terminal .site-topbar::after {
+  content: "SYS://OVERVIEW";
+  position: absolute;
+  top: 0.6rem;
+  right: 1rem;
+  color: rgba(77, 200, 255, 0.72);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 body.theme-terminal .site-brand span {
@@ -1707,7 +1737,7 @@ body.theme-terminal .site-links a {
   min-height: 2.5rem;
   padding: 0.45rem 0.85rem;
   border-color: rgba(49, 240, 197, 0.04);
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(7, 18, 24, 0.72);
   color: var(--text-muted);
   letter-spacing: 0.08em;
@@ -1741,6 +1771,16 @@ body.theme-terminal .hero-index {
   color: var(--text-strong);
 }
 
+body.theme-terminal .hero-index::after {
+  content: "BOOTSTRAP";
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.85rem;
+  color: rgba(77, 200, 255, 0.72);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+}
+
 body.theme-terminal .hero-index .kicker {
   color: rgba(214, 255, 233, 0.75);
 }
@@ -1752,7 +1792,19 @@ body.theme-terminal .index-code {
 
 body.theme-terminal .hero-core {
   border-top: 0;
+  min-height: 20rem;
   box-shadow: var(--shadow-md);
+}
+
+body.theme-terminal .hero-core::after {
+  content: "[ DIRECTORY CORE / ACTIVE ]";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(77, 200, 255, 0.74);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
 }
 
 body.theme-terminal .hero-core h1,
@@ -1796,6 +1848,7 @@ body.theme-terminal .brand-card {
   min-height: 6.4rem;
   align-content: end;
   border-color: rgba(49, 240, 197, 0.18);
+  border-radius: 0;
   background: linear-gradient(180deg, rgba(6, 17, 24, 0.92), rgba(4, 11, 17, 0.96));
   box-shadow: inset 0 0 0 1px rgba(49, 240, 197, 0.04);
 }
@@ -1873,7 +1926,7 @@ body.theme-terminal .nav-strip {
   margin-bottom: 1.2rem;
   padding: 0.55rem;
   border-color: rgba(49, 240, 197, 0.16);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   background: rgba(2, 10, 15, 0.82);
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(18px);
@@ -1882,7 +1935,8 @@ body.theme-terminal .nav-strip {
 body.theme-terminal .nav-strip a {
   min-height: 2.25rem;
   padding: 0.42rem 0.82rem;
-  border: 1px solid transparent;
+  border: 1px solid rgba(49, 240, 197, 0.05);
+  border-radius: 0;
   background: rgba(49, 240, 197, 0.02);
   color: var(--text-muted);
 }
@@ -1914,6 +1968,7 @@ body.theme-terminal .pulse-map-panel::before {
 
 body.theme-terminal .relationship-card {
   border-color: rgba(49, 240, 197, 0.18);
+  border-radius: 0;
   background: rgba(4, 12, 18, 0.94);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
 }
@@ -1955,6 +2010,7 @@ body.theme-terminal .sub-link:focus-visible {
 
 body.theme-terminal .pulse-map-shell {
   border-color: rgba(49, 240, 197, 0.2);
+  border-radius: 0;
   background:
     radial-gradient(circle at 20% 20%, rgba(49, 240, 197, 0.12), transparent 24%),
     radial-gradient(circle at 80% 15%, rgba(255, 79, 216, 0.12), transparent 22%),
@@ -2039,6 +2095,7 @@ body.theme-terminal .pulse-toggle,
 body.theme-terminal .pulse-city-button,
 body.theme-terminal .domain-button {
   border-color: rgba(49, 240, 197, 0.14);
+  border-radius: 0;
   background: rgba(6, 17, 24, 0.84);
   color: var(--text-strong);
 }
@@ -2091,6 +2148,7 @@ body.theme-terminal .domain-copy {
 body.theme-terminal .search-field input,
 body.theme-terminal .select-field select {
   border-color: rgba(49, 240, 197, 0.16);
+  border-radius: 0;
   background: rgba(4, 12, 18, 0.9);
   color: var(--text-strong);
   box-shadow: inset 0 0 0 1px rgba(49, 240, 197, 0.03);
@@ -2112,6 +2170,7 @@ body.theme-terminal .toolbar-button,
 body.theme-terminal .detail-link {
   background: rgba(4, 12, 18, 0.9);
   color: var(--text-strong);
+  border-radius: 0;
 }
 
 body.theme-terminal .reset-button {
@@ -2163,12 +2222,28 @@ body.theme-terminal .signal-strip {
 body.theme-terminal .solution-card {
   min-height: 17rem;
   border-color: rgba(49, 240, 197, 0.16);
+  border-radius: 0;
   background:
     linear-gradient(180deg, rgba(8, 20, 28, 0.92), rgba(4, 11, 18, 0.96)),
     linear-gradient(90deg, rgba(49, 240, 197, 0.03) 1px, transparent 1px),
     linear-gradient(0deg, rgba(49, 240, 197, 0.03) 1px, transparent 1px);
   background-size: auto, 22px 22px, 22px 22px;
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+}
+
+body.theme-terminal .solution-card::before {
+  content: "NODE";
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.4rem;
+  padding: 0 0.42rem;
+  border: 1px solid rgba(49, 240, 197, 0.18);
+  background: rgba(3, 11, 16, 0.88);
+  color: rgba(77, 200, 255, 0.84);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 body.theme-terminal .solution-card:hover,
@@ -2217,6 +2292,7 @@ body.theme-terminal .footer-note {
 
 body.theme-terminal .sub-card {
   border-color: rgba(49, 240, 197, 0.16);
+  border-radius: 0;
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
 }
 
@@ -2246,6 +2322,83 @@ body.theme-terminal .pulse-map-head {
   z-index: 1;
 }
 
+body.theme-terminal .main-panel::after,
+body.theme-terminal .detail-frame::after,
+body.theme-terminal .pulse-map-panel::after,
+body.theme-terminal .pulse-brief::after,
+body.theme-terminal .subpage-hero::after {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(77, 200, 255, 0.72);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+body.theme-terminal .main-panel::after {
+  content: "QUERY://DIRECTORY";
+}
+
+body.theme-terminal .detail-frame::after {
+  content: "FOCUS://ENTRY";
+}
+
+body.theme-terminal .pulse-map-panel::after {
+  content: "MAP://THA-LIVE";
+}
+
+body.theme-terminal .pulse-brief::after {
+  content: "STREAM://PULSE";
+}
+
+body.theme-terminal .subpage-hero::after {
+  content: "MODE://SUBPAGE";
+}
+
+body.theme-terminal .news-panel:first-child::after,
+body.theme-terminal .news-panel:last-child::after,
+body.theme-terminal .rail-block::after,
+body.theme-terminal .note-panel::after {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: rgba(77, 200, 255, 0.68);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+body.theme-terminal .news-panel:first-child::after {
+  content: "FEED://STARTUP";
+}
+
+body.theme-terminal .news-panel:last-child::after {
+  content: "FEED://PUBLIC";
+}
+
+body.theme-terminal .note-panel::after {
+  content: "MEMO";
+}
+
+body.theme-terminal .note-panel-emphasis::after {
+  content: "UPLINK";
+}
+
+body.theme-terminal .rail-block:nth-child(1)::after {
+  content: "FILTER://DOMAIN";
+}
+
+body.theme-terminal .rail-block:nth-child(2)::after {
+  content: "TRACE://PROGRAM";
+}
+
+body.theme-terminal .rail-block:nth-child(3)::after {
+  content: "LINK://MOU";
+}
+
 @media (max-width: 860px) {
   body.theme-terminal .site-links a,
   body.theme-terminal .nav-strip a {
@@ -2262,6 +2415,24 @@ body.theme-terminal .pulse-map-head {
   body.theme-terminal .page-shell {
     width: min(100%, calc(100% - 0.8rem));
     padding-top: 0.7rem;
+  }
+
+  body.theme-terminal .page-shell::before,
+  body.theme-terminal .site-topbar::after,
+  body.theme-terminal .hero-core::after,
+  body.theme-terminal .hero-index::after,
+  body.theme-terminal .main-panel::after,
+  body.theme-terminal .detail-frame::after,
+  body.theme-terminal .pulse-map-panel::after,
+  body.theme-terminal .pulse-brief::after,
+  body.theme-terminal .subpage-hero::after,
+  body.theme-terminal .news-panel:first-child::after,
+  body.theme-terminal .news-panel:last-child::after,
+  body.theme-terminal .rail-block::after,
+  body.theme-terminal .note-panel::after {
+    position: static;
+    display: block;
+    margin-top: 0.6rem;
   }
 
   body.theme-terminal .site-topbar,
