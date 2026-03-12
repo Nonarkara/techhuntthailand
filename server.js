@@ -11,6 +11,7 @@ try {
 
 const ROOT = process.cwd();
 const PORT = Number(process.env.PORT || 4173);
+const HOST = process.env.HOST || "0.0.0.0";
 const NEWS_CACHE_TTL_MS = 10 * 60 * 1000;
 const PULSE_CACHE_TTL_MS = 10 * 60 * 1000;
 const BOUNDARY_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
@@ -304,8 +305,8 @@ const server = http.createServer(async (req, res) => {
   await serveStatic(url.pathname, res);
 });
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`Smart City directory server listening on http://127.0.0.1:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Smart City directory server listening on http://${HOST}:${PORT}`);
 });
 
 async function serveNews(res) {
