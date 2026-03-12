@@ -56,6 +56,15 @@ Source file used by the generator:
 
 Blueprint for Render is included in `render.yaml`.
 
+- Canonical Render service name: `techhuntthailand`
+- Health check path: `/health`
+- Auto deploy target: `main`
+- If older Render services with random suffixes exist, keep `techhuntthailand` and remove the duplicates.
+
+GitHub Pages and Render serve different purposes in this project:
+- GitHub Pages serves the static public build.
+- Render runs the Node server/API for live feeds and dynamic endpoints.
+
 ## Project Notes
 
 - Logos are loaded from `public/` with **depa** as the primary mark.
